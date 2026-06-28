@@ -54,7 +54,7 @@ echo "==============================================================="
 python -m pip install -q \
     "jax[cpu]==0.6.2" "jaxlib==0.6.2" flax==0.11.2 optax==0.2.5 einops \
     tiktoken datasets==3.6.0 transformers==4.53.0 numpy matplotlib tqdm \
-    huggingface-hub safetensors wandb peft 2>&1 | tail -5
+    huggingface-hub safetensors wandb peft joblib 2>&1 | tail -5
 # jax CPU is enough for NCA data generation; torch uses the GPU.
 python -c "import torch; print('torch', torch.__version__, 'cuda', torch.cuda.is_available())"
 python -c "import jax, tiktoken, datasets, transformers, flax; print('deps ok')"
