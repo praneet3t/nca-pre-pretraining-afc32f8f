@@ -88,8 +88,8 @@ python src/nca_ppt.py \
     --model_name llama-mini \
     --n_layer $N_LAYER --n_head $N_HEAD --n_embd $N_EMBD \
     --temperature 1e-3 \
-    --train_num_rules 256 --val_num_rules 64 \
-    --train_num_sim 4 --val_num_sim 2 \
+    --train_num_rules 64 --val_num_rules 16 \
+    --train_num_sim 8 --val_num_sim 4 \
     --dT 1 \
     --init_rollout_steps 10 \
     --filter_rules --filter_rules_threshold 0.5 \
