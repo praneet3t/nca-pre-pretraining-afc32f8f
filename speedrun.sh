@@ -48,9 +48,16 @@ PT_VOCAB=64000          # NCA patch vocab (10^4) fits inside this; matches OWT c
 echo "==============================================================="
 echo " STEP 0: install dependencies"
 echo "==============================================================="
-pip install -q -r requirements.txt 2>&1 | tail -3 || true
+# Install only what the minimal repro needs (the full pinned requirements.txt
+# includes packages like mkl-service that aren't installable here). torch is
+# preinstalled on the box; we keep it as-is.
+python -m pip install -q \
+    "jax[cpu]==0.6.2" "jaxlib==0.6.2" flax==0.11.2 optax==0.2.5 einops \
+    tiktoken datasets==3.6.0 transformers==4.53.0 numpy matplotlib tqdm \
+    huggingface-hub safetensors 2>&1 | tail -5
 # jax CPU is enough for NCA data generation; torch uses the GPU.
 python -c "import torch; print('torch', torch.__version__, 'cuda', torch.cuda.is_available())"
+python -c "import jax, tiktoken, datasets, transformers, flax; print('deps ok')"
 
 echo "==============================================================="
 echo " STEP 1: prepare a small OpenWebText slice (train.bin / val.bin)"
