@@ -82,14 +82,14 @@ python src/nca_ppt.py \
     --batch_size 16 \
     --grad_accumulation_steps 1 \
     --learning_rate 3e-4 \
-    --num_epochs 3 \
+    --num_epochs 12 \
     --warmup 1 \
     --model_type llama \
     --model_name llama-mini \
     --n_layer $N_LAYER --n_head $N_HEAD --n_embd $N_EMBD \
     --temperature 1e-3 \
-    --train_num_rules 64 --val_num_rules 16 \
-    --train_num_sim 8 --val_num_sim 4 \
+    --train_num_rules 256 --val_num_rules 32 \
+    --train_num_sim 16 --val_num_sim 8 \
     --dT 1 \
     --init_rollout_steps 10 \
     --filter_rules --filter_rules_threshold 0.5 \
@@ -123,6 +123,9 @@ OWT_COMMON=(
   --epochs 1
   --warmup 0.05
   --val_freq 25
+  # short OWT phase: measure the early-convergence advantage of the NCA init
+  # before a full epoch washes it out (paper's "faster convergence" claim).
+  --max_samples 3000
   --mixed_precision bf16
   --weight_decay 0.0001
   --grad_clip_enable 1 --grad_clip 1.0
