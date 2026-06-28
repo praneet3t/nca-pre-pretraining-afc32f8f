@@ -73,7 +73,9 @@ class NCA_Tokenizer(Tokenizer):
         tokens = tokens.reshape(B, -1)
         target = target.reshape(B, -1)
 
-        return torch.tensor(tokens), torch.tensor(target)
+        # convert JAX arrays -> numpy before torch.tensor (torch can't ingest
+        # jax arrays directly on this jax version)
+        return torch.tensor(np.asarray(tokens)), torch.tensor(np.asarray(target))
 
     def to_colors(self, x: int) -> jnp.ndarray:
         powers = (self.num_colors ** jnp.arange(self.patch * self.patch))
