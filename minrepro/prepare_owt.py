@@ -31,7 +31,13 @@ def main():
     eot = enc.eot_token
 
     print(f"[prepare_owt] loading {args.dataset} ...", flush=True)
-    ds = load_dataset(args.dataset, split="train")
+    try:
+        ds = load_dataset(args.dataset, split="train", trust_remote_code=True)
+    except Exception as e:
+        print(f"[prepare_owt] {args.dataset} failed ({e}); falling back to wikitext-103", flush=True)
+        ds = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1", split="train")
+        # wikitext rows are line fragments; keep non-empty ones
+        ds = ds.filter(lambda ex: len(ex["text"].strip()) > 0)
     print(f"[prepare_owt] {len(ds)} docs", flush=True)
 
     target = {"train": args.train_tokens, "val": args.val_tokens}
