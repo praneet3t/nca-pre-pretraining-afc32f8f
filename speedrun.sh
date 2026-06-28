@@ -65,7 +65,7 @@ echo "==============================================================="
 if [ ! -f "$OWT_DATA/train.bin" ]; then
   python minrepro/prepare_owt.py \
     --out_dir "$OWT_DATA" \
-    --train_tokens 6000000 \
+    --train_tokens 1000000 \
     --val_tokens 300000
 fi
 
@@ -123,9 +123,6 @@ OWT_COMMON=(
   --epochs 1
   --warmup 0.05
   --val_freq 25
-  # short OWT phase: measure the early-convergence advantage of the NCA init
-  # before a full epoch washes it out (paper's "faster convergence" claim).
-  --max_samples 3000
   --mixed_precision bf16
   --weight_decay 0.0001
   --grad_clip_enable 1 --grad_clip 1.0
