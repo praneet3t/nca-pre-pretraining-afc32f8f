@@ -95,9 +95,23 @@ def main():
     def beat_scratch(n):
         return results[n]["best_ppl"] < scr_ppl if (results[n]["best_ppl"] == results[n]["best_ppl"] and scr_ppl == scr_ppl) else False
     struct_win = all(beat_scratch(n) for n in structured if n in results)
-    rand_lose = all((not beat_scratch(n)) for n in unstructured if n in results) or True
-    verdict = "SUPPORTED" if (struct_win and rand_lose) else ("PARTIAL" if struct_win else "NOT SUPPORTED")
-    lines.append(f"**Verdict: {verdict}** — structured sources (NCA, Sudoku) beat scratch; random does not.\n")
+    # structure-specificity: do structured sources BEAT the unstructured control?
+    # (if random matches/beats sudoku/nca, the transfer is generic warm-up, not structure)
+    struct_specific = False
+    if "random" in results:
+        rand_ppl = results["random"]["best_ppl"]
+        struct_specific = all(results[n]["best_ppl"] < rand_ppl for n in structured if n in results)
+    if struct_win and struct_specific:
+        verdict = "SUPPORTED (structure-specific)"
+    elif struct_win and not struct_specific:
+        verdict = "GENERIC WARM-UP (all synthetic beats scratch, but structure doesn't beat random)"
+    else:
+        verdict = "NOT SUPPORTED"
+    lines.append(f"**Verdict: {verdict}**\n")
+    lines.append(
+        "Structured sources (NCA, Sudoku) beat scratch; the question is whether they beat the RANDOM control. "
+        "If random matches structured, the transfer is generic optimization warm-up, not a structure-specific prior."
+    )
     lines.append("Artifacts: `comparison.json`, `val_curves.csv`.")
     with open(args.eval_out, "w") as f:
         f.write("\n".join(lines))
